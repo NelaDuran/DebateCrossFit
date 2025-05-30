@@ -1,0 +1,244 @@
+body {
+    font-family: 'Roboto', 'Segoe UI', sans-serif;
+    background: #f0f2ff;
+    margin: 0;
+    padding: 20px;
+    color: #343a40;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(147, 130, 255, 0.1);
+}
+
+h1 {
+    color: #6c5ce7;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(to right, #a8a4ff, #74b9ff);
+    border-radius: 2px;
+}
+
+.debate-container {
+    max-height: 500px;
+    overflow-y: auto;
+    margin: 25px 0;
+    padding: 15px;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: inset 0 2px 4px rgba(147, 130, 255, 0.05);
+}
+
+#debate-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+#debate-table th {
+    padding: 15px;
+    background-color: #f8f9ff;
+    border-bottom: 2px solid #d4d0ff;
+    color: #6c5ce7;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    letter-spacing: 0.5px;
+}
+
+#debate-table td {
+    padding: 20px;
+    vertical-align: top;
+    transition: all 0.3s ease;
+}
+
+.crossfit-message {
+    background-color: rgba(108, 92, 231, 0.05);
+    border-left: 4px solid #6c5ce7;
+    border-radius: 0 8px 8px 0;
+}
+
+.heros-message {
+    background-color: rgba(116, 185, 255, 0.05);
+    border-left: 4px solid #74b9ff;
+    border-radius: 0 8px 8px 0;
+}
+
+#debate-table strong {
+    color: #333;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.message-container {
+    position: relative;
+    padding: 12px;
+    margin: 5px 0;
+    line-height: 1.6;
+}
+
+.message-container p {
+    margin: 0;
+    padding-right: 70px;
+    color: #495057;
+    font-size: 1.05em;
+}
+
+.action-buttons {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.message-container:hover .action-buttons {
+    opacity: 1;
+}
+
+.edit-btn,
+.delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 1.1em;
+}
+
+.edit-btn:hover {
+    background-color: rgba(108, 92, 231, 0.1);
+    color: #6c5ce7;
+}
+
+.delete-btn:hover {
+    background-color: rgba(255, 118, 188, 0.1);
+    color: #ff76bc;
+}
+
+.controls {
+    display: flex;
+    gap: 15px;
+    margin: 30px 0;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1em;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-generar {
+    background-color: #6c5ce7;  /* Lila principal */
+    color: white;
+    box-shadow: 0 2px 4px rgba(108, 92, 231, 0.2);
+}
+
+.btn-continuar {
+    background-color: #74b9ff;  /* Celeste */
+    color: white;
+    box-shadow: 0 2px 4px rgba(116, 185, 255, 0.2);
+}
+
+.btn-limpiar {
+    background-color: #a8a4ff;  /* Lila suave */
+    color: white;
+    box-shadow: 0 2px 4px rgba(168, 164, 255, 0.2);
+}
+
+.btn-pdf {
+    background-color: #e0dcff;  /* Lila muy suave */
+    color: #6c5ce7;
+    box-shadow: 0 2px 4px rgba(224, 220, 255, 0.2);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(108, 92, 231, 0.2);
+    filter: brightness(1.05);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#error-message {
+    display: none;
+    background-color: #ff76bc;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    text-align: center;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(255, 118, 188, 0.2);
+}
+
+#error-message.visible {
+    display: block;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from { 
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilo para el scrollbar */
+.debate-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.debate-container::-webkit-scrollbar-track {
+    background: #f0f2ff;
+    border-radius: 4px;
+}
+
+.debate-container::-webkit-scrollbar-thumb {
+    background: #d4d0ff;
+    border-radius: 4px;
+}
+
+.debate-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a4ff;
+}

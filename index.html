@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debate entre Coaches | CrossFit vs HEROS</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🏋️ Debate entre Coaches Deportivos</h1>
+
+        <div class="debate-container">
+            <table id="debate-table">
+                <tr>
+                    <th>Coach CrossFit</th>
+                    <th>Coach HEROS</th>
+                </tr>
+                <!-- Mensajes se insertarán aquí -->
+            </table>
+        </div>
+
+        <div class="controls">
+            <button id="btn-generar" class="btn-generar">Nuevo Debate</button>
+            <button id="btn-continuar" class="btn-continuar">Continuar Debate</button>
+            <button id="btn-limpiar" class="btn-limpiar">Limpiar</button>
+            <button id="btn-pdf" class="btn-pdf">Exportar a PDF</button>
+        </div>
+    </div>
+
+    <div id="error-message"></div>
+    
+    <!-- Incluir jsPDF desde CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        // Hacer jsPDF disponible globalmente
+        window.jspdf = window.jspdf || jsPDF;
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

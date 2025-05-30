@@ -1,0 +1,376 @@
+# Documentación Técnica Detallada
+
+## 📚 Índice
+1. [Frontend](#frontend)
+2. [Backend](#backend)
+3. [Base de Datos](#base-de-datos)
+4. [API de Gemini](#api-de-gemini)
+5. [Utilidades](#utilidades)
+
+## Frontend
+
+### 🔄 Ciclo de Vida de la Aplicación
+
+#### `initApp()`
+```javascript
+async function initApp()
+```
+**Propósito**: Inicializa la aplicación web.
+**Proceso**:
+1. Obtiene referencias DOM:
+   - `debateTable`: Tabla principal del debate
+   - `btnGenerar`: Botón para nuevo debate
+   - `btnContinuar`: Botón para continuar debate
+   - `btnLimpiar`: Botón para limpiar debate
+   - `btnPdf`: Botón para exportar a PDF
+2. Verifica existencia de elementos
+3. Configura event listeners
+4. Carga debate previo si existe
+
+### 💬 Gestión de Mensajes
+
+#### `addMessage(tema, coach, contexto)`
+```javascript
+async function addMessage(tema, coach, contexto)
+```
+**Parámetros**:
+- `tema`: String - Tema del debate
+- `coach`: String - 'CrossFit' o 'HEROS'
+- `contexto`: String - Mensaje anterior (opcional)
+
+**Proceso**:
+1. Validación de parámetros
+2. Preparación de datos para API
+3. Llamada a Gemini API
+4. Almacenamiento en MongoDB
+5. Actualización de interfaz
+
+**Manejo de Errores**:
+- Valida campos requeridos
+- Captura errores de red
+- Maneja errores de API
+- Muestra mensajes de error al usuario
+
+#### `updateMessage(mensajeId, nuevoMensaje)`
+```javascript
+async function updateMessage(mensajeId, nuevoMensaje)
+```
+**Parámetros**:
+- `mensajeId`: String - ID del mensaje a actualizar
+- `nuevoMensaje`: String - Nuevo contenido
+
+**Proceso**:
+1. Localiza mensaje en la tabla
+2. Identifica coach actual
+3. Actualiza en base de datos
+4. Regenera respuestas posteriores
+5. Actualiza interfaz
+
+**Características Especiales**:
+- Mantiene coherencia del debate
+- Regenera respuestas automáticamente
+- Preserva turnos correctos
+
+### 🎯 Manipulación del DOM
+
+#### `addToTable(coach, mensaje, mensajeId)`
+```javascript
+function addToTable(coach, mensaje, mensajeId)
+```
+**Parámetros**:
+- `coach`: String - Identificador del coach
+- `mensaje`: String - Contenido del mensaje
+- `mensajeId`: String - ID único del mensaje
+
+**Estructura HTML Generada**:
+```html
+<tr>
+  <td class="[coach]-message">
+    <div class="message-container" data-message-id="[mensajeId]">
+      <p>[mensaje]</p>
+      <div class="action-buttons">
+        <button class="edit-btn">✏️</button>
+        <button class="delete-btn">🗑️</button>
+      </div>
+    </div>
+  </td>
+</tr>
+```
+
+**Características**:
+- Estructura semántica
+- Botones de acción ocultos
+- Estilos dinámicos por coach
+- Auto-scroll al nuevo mensaje
+
+### 🔍 Utilidades Frontend
+
+#### `findMessageRowById(mensajeId)`
+```javascript
+function findMessageRowById(mensajeId)
+```
+**Propósito**: Localiza la fila de un mensaje específico
+**Retorno**: Element | null
+
+#### `showError(message)`
+```javascript
+function showError(message)
+```
+**Características**:
+- Muestra error 5 segundos
+- Animación fade in/out
+- Estilo destacado
+- Auto-limpieza
+
+## Backend
+
+### ⚙️ Configuración del Servidor
+
+#### Middleware
+```javascript
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+```
+
+#### Conexión MongoDB
+```javascript
+mongoose.connect(process.env.MONGODB_URI)
+```
+**Eventos Monitoreados**:
+- Conexión exitosa
+- Desconexión
+- Error
+- Reconexión
+
+### 📡 API Endpoints
+
+#### POST /api/generar-respuesta
+```javascript
+app.post('/api/generar-respuesta', async (req, res) => {})
+```
+**Body**:
+```json
+{
+    "tema": "string",
+    "estilo": "CrossFit|HEROS",
+    "contexto": "string?"
+}
+```
+**Respuesta**:
+```json
+{
+    "success": true,
+    "respuesta": "string"
+}
+```
+
+#### POST /api/guardar-mensaje
+**Body**:
+```json
+{
+    "tema": "string",
+    "coach": "CrossFit|HEROS",
+    "mensaje": "string"
+}
+```
+**Respuesta**:
+```json
+{
+    "success": true,
+    "debateId": "string",
+    "mensaje": "object"
+}
+```
+
+#### PUT /api/mensajes/:id
+**Parámetros**:
+- `id`: ID del mensaje
+
+**Body**:
+```json
+{
+    "mensaje": "string"
+}
+```
+
+#### DELETE /api/mensajes/:id
+**Parámetros**:
+- `id`: ID del mensaje
+
+### 🤖 Generación de Prompts
+
+#### `generatePrompt(tema, estilo, contexto)`
+```javascript
+function generatePrompt(tema, estilo, contexto)
+```
+**Perfiles de Coach**:
+```javascript
+const coachProfiles = {
+    CrossFit: {
+        personalidad: "apasionado y directo",
+        enfoque: "resultados medibles y adaptaciones rápidas"
+    },
+    HEROS: {
+        personalidad: "analítico y metódico",
+        enfoque: "precisión técnica y progresión científica"
+    }
+};
+```
+
+**Formato de Prompt**:
+```
+Eres un coach de [estilo] respondiendo en un debate sobre: "[tema]".
+Tu personalidad es [personalidad] y te enfocas en [enfoque].
+[Si hay contexto: Responde al último mensaje de manera breve...]
+[Si no hay contexto: Da una opinión breve sobre el tema...]
+```
+
+## Base de Datos
+
+### 📊 Esquema de Datos
+
+#### Debate
+```javascript
+const DebateSchema = new mongoose.Schema({
+    tema: { 
+        type: String, 
+        required: true 
+    },
+    coach: { 
+        type: String, 
+        required: true, 
+        enum: ['CrossFit', 'HEROS'] 
+    },
+    mensaje: { 
+        type: String, 
+        required: true 
+    },
+    fecha: { 
+        type: Date, 
+        default: Date.now 
+    }
+});
+```
+
+### 🔄 Índices
+```javascript
+DebateSchema.index({ fecha: -1 });
+DebateSchema.index({ tema: 1, fecha: -1 });
+```
+
+## API de Gemini
+
+### 🔑 Configuración
+```javascript
+const API_KEY = process.env.GEMINI_API_KEY;
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
+```
+
+### 📝 Formato de Solicitud
+```javascript
+const requestBody = {
+    contents: [{
+        parts: [{
+            text: promptText
+        }]
+    }]
+};
+```
+
+### 🎯 Parámetros de Control
+- Máximo 2 oraciones por respuesta
+- Tono profesional y competitivo
+- Respuestas contextualizadas
+- Preguntas de seguimiento
+
+## Utilidades
+
+### 📤 Exportación PDF
+```javascript
+async function exportToPDF()
+```
+**Características**:
+- Título formateado
+- Mensajes organizados por coach
+- Estilos consistentes
+- Paginación automática
+- Pie de página con fecha
+
+### 🧹 Limpieza de Datos
+```javascript
+async function clearDebate()
+```
+**Acciones**:
+1. Limpia frontend
+2. Elimina datos en MongoDB
+3. Reinicia variables de estado
+4. Actualiza interfaz
+
+### 🔍 Debugging
+```javascript
+console.log('📝 Procesando:', { 
+    accion: 'string',
+    datos: 'object',
+    timestamp: 'date'
+});
+```
+
+## 🎨 Estilos Detallados
+
+### Variables CSS
+```css
+:root {
+    --crossfit-color: #6c5ce7;
+    --heros-color: #74b9ff;
+    --error-color: #ff76bc;
+    --background: #f0f2ff;
+}
+```
+
+### Animaciones
+```css
+@keyframes slideIn {
+    from { 
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+```
+
+### Media Queries
+```css
+@media (max-width: 768px) {
+    .controls {
+        flex-direction: column;
+    }
+    .debate-container {
+        max-height: 70vh;
+    }
+}
+```
+
+## 🔒 Seguridad
+
+### Validaciones
+1. Sanitización de entradas
+2. Validación de tipos
+3. Límites de longitud
+4. Verificación de roles
+
+### CORS
+- Origen permitido: *
+- Métodos: GET, POST, PUT, DELETE
+- Headers: Content-Type, Authorization
+
+### Manejo de Errores
+1. Try-catch en todas las operaciones
+2. Logging estructurado
+3. Respuestas de error consistentes
+4. Timeout en operaciones async 
