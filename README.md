@@ -1,4 +1,4 @@
-#Creado por Marianela Duran y Caren Rueda
+# Creado por Marianela Duran y Caren Rueda
 # Sistema de Debate entre Coaches (CrossFit vs HEROS)
 
 ## 📝 Descripción General
